@@ -54,7 +54,7 @@ def validar_opcion(texto:str, rango_minimo:int, rango_maximo:int):
 
 def eliminar_estudiante(estudiante:dict) -> None:
     datos_alumnos.remove(estudiante)
-    print('Estudiante eliminado.')
+    print('\nEstudiante eliminado.')
 
 def validar_datos_estudiante() -> dict:
     try:
@@ -102,7 +102,7 @@ def crear_estudiante() -> None:
     if estudiante != {}:
         estudiante['codigo'] = codigo_unico_estudiante
         datos_alumnos.append(estudiante)
-        print('¡Estudiante agregado con exito!')
+        print('\n¡Estudiante agregado con exito!')
 
 def modificar_datos_estudiante(estudiante:dict):
     
@@ -127,8 +127,18 @@ def modificar_datos_estudiante(estudiante:dict):
         if promedio_estudiante < 1.0 or promedio_estudiante > 7.0:
             print('Error: promedio invalido, solo se permiten notas entre 1.0 y 7.0')
             return {}
+        
+        for i in datos_alumnos:
+            if i['codigo'] == estudiante['codigo']:
+                i['edad'] = edad_estudiante
+                i['promedio'] = promedio_estudiante
+                i['genero'] = genero_estudiante
+        
+        return True 
+        
     except ValueError:
-        print('Error: ')
+        print('Error: solo se permiten numeros enteros.')
+        return {}
     
     
 
@@ -192,13 +202,33 @@ Sistema de Gestión de Estudiantes
         if estudiante != {}:
             estudiante = modificar_datos_estudiante(estudiante)
             
-            # Si el valor de estudiante esta vacio
-            if estudiante == {}:
-                print('Error: ')
-            else:
-                print('exito')
+            
+            if estudiante != {}:
+                print('\nDatos actualizados con exito')
+            
         else:
-            print('Error: estudiante no encontrado')
+            print('\nError: estudiante no encontrado')
     
-    
+    # Elimina estudiante
+    elif opcion == 4:
+        codigo_estudiante = input('Ingrese codigo de estudiante: ')
+        estudiante = buscar_estudiante(codigo_estudiante, 'codigo')
         
+        if estudiante != {}:
+            eliminar_estudiante(estudiante)
+        else:
+            print('\nError: no se pudo eliminar')
+    
+    # Listar todos los estudiante
+    elif opcion == 5:
+        
+        # Valida que haya estudiante que listar
+        if len(datos_alumnos) == 0:
+            print('\nError: no hay registros.')
+            continue
+        
+        for i in datos_alumnos:
+            print(f'{i['codigo']} - {i['nombre']} (Promedio: {i['promedio']})')
+    
+    elif opcion == 6:
+        print('Saliste del programa')
