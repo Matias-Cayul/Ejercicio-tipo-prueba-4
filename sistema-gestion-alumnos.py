@@ -18,24 +18,11 @@ def buscar_estudiante(identificador:str, filtro:str) -> dict:
     # Recorre la lista de los datos de alumnos
     for i in datos_alumnos:
         if i[filtro] == identificador.lower():
-            print(i)
             # Retorna el diccionario
             return i
         
     # Retorna un diccionario vacio si no se encontro ninguna coincidencia     
     return {}
-    
-    
-    """if filtro == 'nombre':
-        
-        
-    elif filtro == 'codigo':
-        for i in datos_alumnos:
-            if i['codigo'] == identificador:
-                #retorna el diccionario
-                return i
-        # Retorna un diccionario vacio si no se encontro ninguna coincidencia
-        return {}"""
 
 def generar_codigo_estudiante() -> str:
     """Genera codigo identificacion de estudiante"""
@@ -49,13 +36,13 @@ def generar_codigo_estudiante() -> str:
         
     return identificacion_estudiante
    
-def validar_opcion(texto:str):
+def validar_opcion(texto:str, rango_minimo:int, rango_maximo:int):
     while True:
         try:
             opcion = int(input(texto))
             
             # Verifica que la opcion ingresada este dentro del rango de opciones
-            if opcion < 1 or opcion > 6:
+            if opcion < rango_minimo or opcion > rango_maximo:
                 print('Error: el valor ingresado esta fuera del rango del opciones.')
                 continue
             
@@ -64,6 +51,10 @@ def validar_opcion(texto:str):
 
         except ValueError:
             print('Error: solamente se permiten numeros enteros.')
+
+def eliminar_estudiante(estudiante:dict) -> None:
+    datos_alumnos.remove(estudiante)
+    print('Estudiante eliminado.')
 
 def validar_datos_estudiante() -> dict:
     try:
@@ -113,6 +104,33 @@ def crear_estudiante() -> None:
         datos_alumnos.append(estudiante)
         print('¡Estudiante agregado con exito!')
 
+def modificar_datos_estudiante(estudiante:dict):
+    
+    try:
+        edad_estudiante = int(input('Edad (entre 12 y 80 años): '))
+        
+        # valida si al edad esta fuera del rango de edad (12 - 80)
+        if edad_estudiante < 12 or edad_estudiante > 80:
+            print('Error: edad ingresada invalida, esta fuera del rango de edades (12 - 80)')
+            return {}
+            
+        genero_estudiante = input('Genero (solo "F" o "M"): ').upper()
+            
+        # valida que el genero este dentro del rango (F y M)
+        if genero_estudiante != 'F' and genero_estudiante != 'M':
+            print('Error: solo se permiten "F" de femenino o "M" de masculino.') 
+            return {}
+            
+        promedio_estudiante = float(input('Promedio de notas (entre 1.0 y 7.0): '))
+            
+        # valida que la nota este dentro del rango (1.0 y 7.0)
+        if promedio_estudiante < 1.0 or promedio_estudiante > 7.0:
+            print('Error: promedio invalido, solo se permiten notas entre 1.0 y 7.0')
+            return {}
+    except ValueError:
+        print('Error: ')
+    
+    
 
 while True:    
     print("""
@@ -126,10 +144,61 @@ Sistema de Gestión de Estudiantes
 6) Salir
 *********************************""")
     
-    opcion = validar_opcion('Ingrese la opcion: ')
+    opcion = validar_opcion('Ingrese la opcion: ', 1, 6)
     
+    # Crear estudiante
     if opcion == 1:
         crear_estudiante()
+    
+    # Buscar estudiante
     elif opcion == 2:
-        print('')
+        print('------- Buscar estudiante -------')
+        print('1) Nombre estudiante')
+        print('2) Codigo estudiante')
+        print('3) Regresar')
+        
+        opcion = validar_opcion('Ingrese una opcion: ', 1, 3)
+        
+        # Regresa al menu principal
+        if opcion == 3:
+            continue
+        
+        # Busca estudiante por codigo
+        elif opcion == 2:
+            identificador_estudiante = input('Ingrese codigo estudiante: ')
+            estudiante = buscar_estudiante(identificador_estudiante, 'codigo')
+            
+            if estudiante != {}:
+                print(f'Nombre: {estudiante['nombre']} - Edad: {estudiante['edad']} - Genero: {estudiante['genero']} - Codigo: {estudiante['codigo']} - Promedio: {estudiante['promedio']}')
+            else:
+                print('Error: estudiante no encontrado.')
+            
+        
+        # Busca estudiante por nombre
+        elif opcion == 1:
+            identificador_estudiante = input('Ingrese nombre estudiante: ')
+            estudiante = buscar_estudiante(identificador_estudiante, 'nombre')
+            
+            if estudiante != {}:
+                print(f'Nombre: {estudiante['nombre']} - Edad: {estudiante['edad']} - Genero: {estudiante['genero']} - Codigo: {estudiante['codigo']} - Promedio: {estudiante['promedio']}')
+            else:
+                print('Error: estudiante no encontrado.')
+
+    # Editar datos estudiante
+    elif opcion == 3:
+        codigo_estudiante = input('Ingrese codigo de estudiante: ')
+        estudiante = buscar_estudiante(codigo_estudiante, 'codigo')
+        
+        if estudiante != {}:
+            estudiante = modificar_datos_estudiante(estudiante)
+            
+            # Si el valor de estudiante esta vacio
+            if estudiante == {}:
+                print('Error: ')
+            else:
+                print('exito')
+        else:
+            print('Error: estudiante no encontrado')
+    
+    
         
